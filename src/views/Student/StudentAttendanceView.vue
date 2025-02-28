@@ -4,6 +4,7 @@ import {Backend} from "../../main.ts";
 import {onMounted, onUnmounted, ref} from "vue";
 import useEventBus from "../../events/EventBus.ts";
 import {ErrorMessage} from "../../events/MessageEvents.ts";
+import Navigation from "../../components/Common/Navigation.vue";
 
 const {emit} = useEventBus()
 
@@ -37,6 +38,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <Navigation/>
   <header>
     <h1>Register Your Attendance</h1>
     <p>Please scan the QR code with your device to register your attendance.</p>

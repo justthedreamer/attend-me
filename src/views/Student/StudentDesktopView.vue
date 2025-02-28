@@ -5,6 +5,7 @@ import {ref} from "vue";
 import type {SessionWithAttendance} from "../../model/SessionWithAttendance.ts";
 import {AttendMeBackendHelper} from "../../helpers/AttendMeBackendHelper.ts";
 import StudentCourseCart from "../../components/Student/StudentCourseCart.vue";
+import Navigation from "../../components/Common/Navigation.vue";
 
 const filter = ref<CourseSessionListFilters | null>(null);
 const sessions = ref<SessionWithAttendance[]>([]);
@@ -21,6 +22,7 @@ const fetchAndSetSessionsAsync = async () => {
 </script>
 
 <template>
+  <Navigation/>
   <h1>Student Desktop</h1>
 
   <section id="sessions-filters">
@@ -42,7 +44,8 @@ const fetchAndSetSessionsAsync = async () => {
                          :session-attendance="session.attendance"
                          :location-name="session.locationName"/>
 
-      <p class="italic color-shy-white" v-if="sessions.length === 0">No sessions matching the filter criteria were found.</p>
+      <p class="italic color-shy-white" v-if="sessions.length === 0">No sessions matching the filter criteria were
+        found.</p>
       <p v-if="!filter">Loading...</p>
     </div>
   </section>

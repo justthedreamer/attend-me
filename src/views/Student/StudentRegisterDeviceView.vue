@@ -4,6 +4,7 @@ import type {DeviceRegisterDTO} from "../../backend/AttendMeBackendClientBase.ts
 import {Backend} from "../../main.ts";
 import useEventBus from "../../events/EventBus.ts";
 import {ErrorMessage} from "../../events/MessageEvents.ts";
+import Navigation from "../../components/Common/Navigation.vue";
 
 const props = defineProps({
   token: String
@@ -35,6 +36,7 @@ const handleRegister = async () => {
 </script>
 
 <template>
+  <Navigation/>
   <div id="device-registration-wrapper">
     <section id="device-registration-description">
       <h1>Device registration</h1>
