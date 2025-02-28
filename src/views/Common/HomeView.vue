@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import LoginForm from '../components/Common/LoginForm.vue';
+import LoginForm from '../../components/Common/LoginForm.vue';
+import {onMounted} from "vue";
+import {useRouter} from "vue-router";
+import {Backend} from "../../main.ts";
+import {SessionStorage} from "../../auth/SessionStorage.ts";
+import {redirectToDesktopAsync} from "../../helpers/RediretionHelper.ts";
+
+const router = useRouter()
+
+onMounted(async () => {
+  await Backend.restoreTokens()
+  const role = await SessionStorage.getRole()
+  await redirectToDesktopAsync(router, role)
+})
 </script>
 
 <template>
