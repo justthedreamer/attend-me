@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import type {CourseSessionListFilters, CourseSessionListItem} from "../backend/AttendMeBackendClientBase.ts";
-import {Backend} from "../main.ts";
-import CourseListFilters from "../components/Course/CourseListFilters.vue";
-import WhiteBlockMessage from "../components/Common/WhiteBlockMessage.vue";
-import LecturerCourseCart from "../components/Course/Lecturer/LecturerCourseCart.vue";
-import {DateHelper} from "../helpers/DateHelper.ts";
+import type {CourseSessionListFilters, CourseSessionListItem} from "../../backend/AttendMeBackendClientBase.ts";
+import CourseListFilters from "../../components/Course/CourseListFilters.vue";
+import LecturerCourseCart from "../../components/Lecturer/LecturerCourseCart.vue";
+import {DateHelper} from "../../helpers/DateHelper.ts";
+import {AttendMeBackendHelper} from "../../helpers/AttendMeBackendHelper.ts";
+import Navigation from "../../components/Common/Navigation.vue";
 
 const filter = ref<CourseSessionListFilters | null>(null)
 const sessions = ref<CourseSessionListItem[]>([])
@@ -16,23 +16,14 @@ const handleFilterChanged = async (newFilter: CourseSessionListFilters) => {
 }
 
 const fetchAndSetSessionsAsync = async () => {
-  try {
-    const sessionsCollection = await Backend.courseTeacherSessionsGet({
-      pageNumber: 1,
-      pageSize: 999,
-      filters: filter.value
-    })
-
-    sessions.value = sessionsCollection.items;
-  } catch (error) {
-    console.error(error);
-  }
-
+  const sessionsCollection = await AttendMeBackendHelper.getLecturerSessionsAsync(filter.value);
+  sessions.value = sessionsCollection.reverse();
 }
 
 </script>
 
 <template>
+  <Navigation/>
   <h1>Lecturer Desktop</h1>
 
   <section id="sessions-filters">
@@ -48,12 +39,14 @@ const fetchAndSetSessionsAsync = async () => {
                           :course-session-id="session.courseSessionId"
                           :course-name="session.courseName"
                           :course-group-id="session.courseGroupId"
+                          :course-group-name="session.courseGroupName"
                           :course-date="DateHelper.formatNumericDate(session.dateStart)"
                           :session-time-start="DateHelper.formatTime(session.dateStart)"
                           :session-time-end="DateHelper.formatTime(session.dateEnd)"
                           :location-name="session.locationName"/>
 
-      <WhiteBlockMessage v-if="sessions.length === 0" message="No sessions to display." :italic="true"/>
+      <p class="italic color-shy-white" v-if="sessions.length === 0">No sessions matching the filter criteria were
+        found.</p>
       <p v-if="!filter">Loading...</p>
     </div>
   </section>
