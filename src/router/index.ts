@@ -1,29 +1,34 @@
-import {
-    createRouter,
-    createWebHistory,
-} from "vue-router";
+import {createRouter, createWebHistory} from "vue-router";
 import Routes from "./routes";
-import {inject} from "vue";
-import type {ITokenStorage} from "../auth/ITokenStorage.ts";
-import {ServiceCollection} from "../DI.ts";
-import type {IAuthenticationService} from "../services/AuthenticationService.ts";
-import {Role} from "../model/app/Roles.ts";
+import {SessionStorage} from "../auth/SessionStorage.ts";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: Routes.All,
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach((to, from, next) => {
+    // Check if the route requires authentication
     if (to.meta.requireAuth) {
-        const auth = inject<IAuthenticationService>(ServiceCollection.AUTHENTICATION_SERVICE.key)
+        // Check if the token has expired
+        const tokenExpired = new Date(SessionStorage.getAccessTokenExpiry()) < new Date();
+        if (tokenExpired) {
+            next({path: Routes.HomeRoute.path});
+            return;
+        }
 
-        const role_from_storage: Role | null = auth.getRole();
-        const require_role: Role | null = to.meta.role
-        if (role_from_storage !== require_role) next({path: Routes.ErrorRoute.path})
+        // Check if the user role matches the required role for the route
+        const role = SessionStorage.getRole();
+        if (role !== to.meta.role) {
+            console.error("Unauthorized access, role mismatch.");
+            next(false);
+            return;
+        }
+
+        next(); // Proceed to the route if all checks pass
+    } else {
+        next(); // Proceed if no authentication required
     }
-    // if path not require auth, move next in chain.
-    next();
 });
 
 export default router;
