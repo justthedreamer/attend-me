@@ -27,7 +27,11 @@ const copyLink = async () => {
     emit(SuccessMessage, "Link copied.")
 
   } catch (error) {
-    emit(ErrorMessage, "Cannot get or copy link.", error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot get or copy link." + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot get or copy link, an unexpected error occurred.")
+    }
   }
 }
 

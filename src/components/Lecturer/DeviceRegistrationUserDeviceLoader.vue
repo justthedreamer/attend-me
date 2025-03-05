@@ -15,7 +15,7 @@ onMounted(async () => {
 
   if (user) {
     state.value = LoaderState.SUCCESS
-    deviceName.value = user.deviceName
+    deviceName.value = user.deviceName!
   } else {
     state.value = LoaderState.FAILED
   }

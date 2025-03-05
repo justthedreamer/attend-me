@@ -9,7 +9,7 @@ import {ErrorMessage, SuccessMessage} from "../../events/MessageEvents.ts";
 
 const props = defineProps({
   isVisible: Boolean,
-  sessionId: String
+  sessionId: Number
 })
 
 const router = useRouter()
@@ -40,18 +40,25 @@ const copyLink = async () => {
     bus.emit(SuccessMessage, "Link copied.")
 
   } catch (error) {
-    bus.emit(ErrorMessage,
-        "Cannot copy link at this moment. Ensure your browser support clipboard. " + error.message)
+    if (error instanceof Error) {
+      bus.emit(ErrorMessage, "Cannot copy link at this moment. Ensure your browser support clipboard. " + error.message)
+    } else {
+      bus.emit(ErrorMessage, "Cannot copy link at this moment, an unexpected error occurred.")
+    }
   }
 }
 
 onMounted(async () => {
   try {
     const tokenResult = await Backend.courseSessionAttendanceScannerTokenGet(props.sessionId)
-    token.value = tokenResult.token;
+    token.value = tokenResult.token!;
 
   } catch (error) {
-    bus.emit(ErrorMessage, "Cannot fetch attendance scanner token. " + error.message)
+    if (error instanceof Error) {
+      bus.emit(ErrorMessage, "Cannot fetch attendance scanner token. " + error.message)
+    } else {
+      bus.emit(ErrorMessage, "Cannot fetch attendance scanner token, an unexpected error occurred.")
+    }
   }
 })
 

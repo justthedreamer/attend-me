@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {QrcodeStream} from 'vue-qrcode-reader'
+import type {DetectedBarcode} from "vue-qrcode-reader";
 import {Backend} from "../../main.ts";
 import {onMounted} from "vue";
 import useEventBus from "../../events/EventBus.ts";
@@ -11,14 +12,20 @@ const props = defineProps({
 
 const {emit} = useEventBus()
 
-const onDetect = async (data) => {
+const onDetect = async (data: DetectedBarcode[]) => {
   try {
     const code = data[0]
     const result = await Backend.courseSessionAttendanceRegister(code.rawValue)
     emit(SuccessMessage, `${result.name} ${result.surname} successfully attended!`)
 
   } catch (error) {
-    emit(ErrorMessage, "Cannot attend right now. " + error.message)
+
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot attend right now. " + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot attend right now, an unexpected error occurred. ")
+    }
+
   }
 }
 

@@ -9,7 +9,7 @@ import Routes from "./router/routes.ts";
 
 const router = useRouter()
 const {emit} = useEventBus()
-let tokenExpiredCheckIntervalId;
+let tokenExpiredCheckIntervalId: number;
 
 
 const tokenExpirationAsyncHook = async () => {

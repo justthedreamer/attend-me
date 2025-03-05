@@ -32,6 +32,6 @@ const navigateToCourseDetails = async (courseSessionId: number) => {
     <p>Date: {{ props.courseDate }}</p>
     <p>Time: {{ props.sessionTimeStart }}-{{ props.sessionTimeEnd }}</p>
     <p>Location: {{ props.locationName }}</p>
-    <button class="btn-secondary" @click="navigateToCourseDetails(props.courseSessionId)">Details</button>
+    <button class="btn-secondary" @click="navigateToCourseDetails(props.courseSessionId!)">Details</button>
   </div>
 </template>

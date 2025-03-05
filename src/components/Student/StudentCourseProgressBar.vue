@@ -9,7 +9,7 @@ const props = defineProps({
 
 const completedSessionsCount = computed(() => {
   const now = new Date()
-  return props.sessions?.filter(session => now >= session.dateEnd).length;
+  return props.sessions?.filter(session => now >= session.dateEnd!).length;
 })
 
 const totalSessionsCount = computed(() => {
@@ -17,7 +17,7 @@ const totalSessionsCount = computed(() => {
 })
 
 const completionPercentage = computed(() => {
-  return (completedSessionsCount.value / totalSessionsCount.value) * 100;
+  return (completedSessionsCount.value! / totalSessionsCount.value!) * 100;
 });
 
 </script>

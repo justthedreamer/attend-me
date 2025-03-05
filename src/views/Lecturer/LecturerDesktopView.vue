@@ -17,6 +17,11 @@ const handleFilterChanged = async (newFilter: CourseSessionListFilters) => {
 
 const fetchAndSetSessionsAsync = async () => {
   const sessionsCollection = await AttendMeBackendHelper.getLecturerSessionsAsync(filter.value);
+
+  if (!sessionsCollection) {
+    throw new Error("Cannot fetch lecturer sessions right now.")
+  }
+
   sessions.value = sessionsCollection.reverse();
 }
 
@@ -40,9 +45,9 @@ const fetchAndSetSessionsAsync = async () => {
                           :course-name="session.courseName"
                           :course-group-id="session.courseGroupId"
                           :course-group-name="session.courseGroupName"
-                          :course-date="DateHelper.formatNumericDate(session.dateStart)"
-                          :session-time-start="DateHelper.formatTime(session.dateStart)"
-                          :session-time-end="DateHelper.formatTime(session.dateEnd)"
+                          :course-date="DateHelper.formatNumericDate(session!.dateStart!)"
+                          :session-time-start="DateHelper.formatTime(session!.dateStart!)"
+                          :session-time-end="DateHelper.formatTime(session!.dateEnd!)"
                           :location-name="session.locationName"/>
 
       <p class="italic color-shy-white" v-if="sessions.length === 0">No sessions matching the filter criteria were

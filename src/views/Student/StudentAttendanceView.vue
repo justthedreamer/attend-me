@@ -9,21 +9,34 @@ import Navigation from "../../components/Common/Navigation.vue";
 const {emit} = useEventBus()
 
 const token = ref<string>("")
-let tokenFetchIntervalId;
+let tokenFetchIntervalId: number;
 
 const fetchTokenAsync = async () => {
   try {
-    await Backend.restoreTokens()
+    Backend.restoreTokens()
     const tokenResult = await Backend.userAttendanceTicketGet()
-    token.value = tokenResult.token
+
+    if (!tokenResult.token) {
+      emit(ErrorMessage, "Failed to fetch attendance ticket.")
+      return;
+      
+    } else {
+      token.value = tokenResult.token
+
+    }
 
   } catch (error) {
-    emit(ErrorMessage, "Cannot fetch attendance ticket. " + error.message)
+
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot fetch attendance ticket. " + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot fetch attendance ticket, an unexpected token occurred.")
+    }
   }
 }
 
 onMounted(async () => {
-  await Backend.restoreTokens()
+  Backend.restoreTokens()
   await fetchTokenAsync()
 
   tokenFetchIntervalId = setInterval(async () => {

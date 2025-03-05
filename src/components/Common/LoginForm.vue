@@ -17,10 +17,14 @@ const handleLogIn = async (): Promise<void> => {
   try {
     await Backend.userLogin(login.value, password.value);
     const role = SessionStorage.getRole()
-    await redirectToDesktopAsync(router, role)
+    await redirectToDesktopAsync(router, role!)
     emit(SuccessMessage, "Login successful.")
   } catch (error) {
-    emit(ErrorMessage, error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, error.message)
+    } else {
+      emit(ErrorMessage, "Cannot login right now, an unexpected error occurred.")
+    }
   }
 }
 </script>

@@ -16,7 +16,12 @@ const handleFilterChanged = async (newFilter: CourseSessionListFilters) => {
 }
 
 const fetchAndSetSessionsAsync = async () => {
-  sessions.value = await AttendMeBackendHelper.getStudentSessionsWithAttendanceAsync(filter.value);
+  const sessionsWithAttendance = await AttendMeBackendHelper.getStudentSessionsWithAttendanceAsync(filter.value);
+
+  if (!sessionsWithAttendance) {
+    throw new Error("Cannot fetch student session with attendance.")
+  }
+  sessions.value = sessionsWithAttendance;
 }
 
 </script>

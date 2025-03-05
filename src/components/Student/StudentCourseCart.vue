@@ -41,10 +41,10 @@ const navigateToCourseDetails = async (courseGroupId: number) => {
 
     <button class="btn-primary"
             v-if="!props.sessionAttendance"
-            @click="navigateToAttendanceView(props.courseSessionId)">Attend Me
+            @click="navigateToAttendanceView(props.courseSessionId!)">Attend Me
     </button>
 
     <p v-if="props.sessionAttendance">Attended &#10004;</p>
-    <button class="btn-secondary" @click="navigateToCourseDetails(props.courseGroupId)">Details</button>
+    <button class="btn-secondary" @click="navigateToCourseDetails(props.courseGroupId!)">Details</button>
   </div>
 </template>

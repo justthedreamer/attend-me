@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {useRoute, useRouter} from "vue-router";
+import {useRoute} from "vue-router";
 import {computed, onMounted, ref} from "vue";
 import AttendanceState from "../Course/AttendanceState.vue";
 import StudentCourseProgressBar from "./StudentCourseProgressBar.vue";
@@ -11,7 +11,6 @@ import StudentCourseAttendanceGraph from "./StudentCourseAttendanceGraph.vue";
 import useEventBus from "../../events/EventBus.ts";
 import {ErrorMessage} from "../../events/MessageEvents.ts";
 
-const router = useRouter();
 const route = useRoute();
 const {emit} = useEventBus();
 
@@ -28,7 +27,8 @@ const totalSessionsCount = computed(() => {
 
 onMounted(async () => {
   try {
-    const courseGroupId = route.params.courseGroupId as number;
+    const courseGroupId = Number.parseInt(route.params.courseGroupId as string)
+
     const courseData: CourseSessionListItem[] = await Backend.courseStudentGroupSessionsGet(courseGroupId);
     const attendanceLogs: AttendanceLog[] = await Backend.courseStudentAttendanceGet(courseGroupId);
 
@@ -37,12 +37,16 @@ onMounted(async () => {
         .reverse();
 
     if (courseData.length > 0) {
-      courseName.value = courseData[0].courseName;
-      courseGroupName.value = courseData[0].courseGroupName;
+      courseName.value = courseData[0].courseName!;
+      courseGroupName.value = courseData[0].courseGroupName!;
     }
 
   } catch (error) {
-    emit(ErrorMessage, "Cannot fetch course data." + error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot fetch course data." + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot fetch course data, an unexpected error occurred.")
+    }
   }
 });
 </script>

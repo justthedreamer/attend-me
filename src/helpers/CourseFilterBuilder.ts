@@ -1,12 +1,12 @@
 import type {CourseSessionListFilters} from "../backend/AttendMeBackendClientBase.ts";
 
 export class CourseFilterBuilder {
-    private search?: string = null
-    private courseName?: string = null
-    private courseGroupName?: string = null
-    private locationName?: string = null
-    private dateStart?: Date = null;
-    private dateEnd?: Date = null;
+    private search?: string = undefined
+    private courseName?: string = undefined
+    private courseGroupName?: string = undefined
+    private locationName?: string = undefined
+    private dateStart?: Date = undefined;
+    private dateEnd?: Date = undefined;
 
     public withSearch(phrase: string | undefined): this {
         this.search = phrase;

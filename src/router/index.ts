@@ -11,7 +11,7 @@ router.beforeEach((to, from, next) => {
     // Check if the route requires authentication
     if (to.meta.requireAuth) {
         // Check if the token has expired
-        const tokenExpired = new Date(SessionStorage.getAccessTokenExpiry()) < new Date();
+        const tokenExpired = new Date(SessionStorage.getAccessTokenExpiry()!) < new Date();
         if (tokenExpired) {
             next({path: Routes.HomeRoute.path});
             return;

@@ -15,7 +15,7 @@ const {emit} = useEventBus()
 const deviceName = ref<string>("")
 const userName = ref<string>("")
 const userSurname = ref<string>("")
-const indexNumber = ref<string>("")
+const indexNumber = ref<number>()
 
 const handleRegister = async () => {
   try {
@@ -26,11 +26,17 @@ const handleRegister = async () => {
       albumIdNumber: indexNumber.value
     }
 
-    const result = await Backend.userDeviceRegisterWithToken(props.token, dto)
+    const result = await Backend.userDeviceRegisterWithToken(props.token!, dto)
     console.log(result)
 
   } catch (error) {
-    emit(ErrorMessage, "Cannot register device. " + error.message)
+
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot register device. " + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot register device, an unexpected error occurred.")
+    }
+
   }
 }
 </script>

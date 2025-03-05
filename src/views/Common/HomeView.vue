@@ -9,10 +9,11 @@ import {redirectToDesktopAsync} from "../../helpers/RediretionHelper.ts";
 const router = useRouter()
 
 onMounted(async () => {
-  await Backend.restoreTokens()
-  const role = await SessionStorage.getRole()
-  await redirectToDesktopAsync(router, role)
+  Backend.restoreTokens()
+  const role = SessionStorage.getRole()
+  await redirectToDesktopAsync(router, role!)
 })
+
 </script>
 
 <template>

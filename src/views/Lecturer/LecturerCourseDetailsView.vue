@@ -10,7 +10,7 @@ import {ErrorMessage} from "../../events/MessageEvents.ts";
 import Navigation from "../../components/Common/Navigation.vue";
 
 const props = defineProps({
-  courseSessionId: String,
+  courseSessionId: Number,
 })
 
 const {emit} = useEventBus()
@@ -20,40 +20,59 @@ const students = ref<CourseSessionAttendanceRecord[]>([]);
 const attendanceScannerPopupState = ref<boolean>(false)
 const deviceRegistrationPopupState = ref<boolean>(false)
 
-let fetchingStudentListIntervalId;
+let fetchingStudentListIntervalId: number;
 
 const fetchSessionDetailsAsync = async (sessionId: number) => {
   try {
     session.value = await Backend.courseTeacherSessionGet(sessionId)
   } catch (error) {
-    emit(ErrorMessage, "Cannot fetch session details. " + error.message)
+
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot fetch session details. " + error.message)
+
+    } else {
+      emit(ErrorMessage, "Cannot fetch session details.")
+    }
   }
 }
 
 const fetchStudentsListAsync = async (sessionId: number) => {
   try {
     students.value = await Backend.courseSessionAttendanceListGet(sessionId)
-
   } catch (error) {
-    emit(ErrorMessage, "Cannot fetch session details. " + error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot fetch session details. " + error.message)
+
+    } else {
+      emit(ErrorMessage, "Cannot fetch session details, an unexpected error occurred.")
+    }
   }
 }
 
-const markAsAttendedAsync = async (student) => {
+const markAsAttendedAsync = async (student: CourseSessionAttendanceRecord) => {
   try {
     await Backend.courseSessionAttendanceToggle(student.attenderUserId, student.courseSessionId, true)
-    await fetchStudentsListAsync(student.courseSessionId)
+    await fetchStudentsListAsync(student.courseSessionId!)
   } catch (error) {
-    emit(ErrorMessage, "Cannot attend right now. " + error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot attend right now. " + error.message)
+    } else {
+      emit(ErrorMessage, "Cannot attend right now, an unexpected error occurred.")
+    }
   }
 }
 
-const markAsUnattendedAsync = async (student) => {
+const markAsUnattendedAsync = async (student: CourseSessionAttendanceRecord) => {
   try {
     await Backend.courseSessionAttendanceToggle(student.attenderUserId, student.courseSessionId, false)
-    await fetchStudentsListAsync(student.courseSessionId)
+    await fetchStudentsListAsync(student.courseSessionId!)
   } catch (error) {
-    emit(ErrorMessage, "Cannot mark as unattended right now. " + error.message)
+    if (error instanceof Error) {
+      emit(ErrorMessage, "Cannot mark as unattended right now. " + error.message)
+
+    } else {
+      emit(ErrorMessage, "Cannot mark as unattended right now, an unexpected error occurred.")
+    }
   }
 }
 
@@ -66,12 +85,16 @@ const toggleDeviceRegistrationPopup = () => {
 }
 
 onMounted(async () => {
-  const sessionId = props.courseSessionId
+  const sessionId = props.courseSessionId!
+
   await fetchSessionDetailsAsync(sessionId)
+
   await fetchStudentsListAsync(sessionId)
+
   fetchingStudentListIntervalId = setInterval(() => {
     fetchStudentsListAsync(sessionId)
   }, 2000)
+
 })
 
 onUnmounted(() => {
@@ -98,8 +121,8 @@ onUnmounted(() => {
     <div id="course-details" v-if="session">
       <h2>{{ session.courseName }}</h2>
       <p>Group: {{ session.courseGroupName }}</p>
-      <p>Date: {{ DateHelper.formatNumericDate(session.dateStart) }}</p>
-      <p>Time: {{ DateHelper.formatTime(session.dateStart) }}-{{ DateHelper.formatTime(session.dateEnd) }}</p>
+      <p>Date: {{ DateHelper.formatNumericDate(session!.dateStart!) }}</p>
+      <p>Time: {{ DateHelper.formatTime(session!.dateStart!) }}-{{ DateHelper.formatTime(session!.dateEnd!) }}</p>
       <p>Location: {{ session.locationName }}</p>
     </div>
     <div id="course-actions">

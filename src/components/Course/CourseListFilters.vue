@@ -12,8 +12,8 @@ const emitFilter = () => {
 
   const filter = new CourseFilterBuilder()
       .withSearch(search.value)
-      .withDateStart(dateFilterOption.dateStart)
-      .withDateEnd(dateFilterOption.dateEnd)
+      .withDateStart(dateFilterOption.dateStart!)
+      .withDateEnd(dateFilterOption.dateEnd!)
       .build()
 
   emit('filterChanged', filter);
@@ -23,8 +23,8 @@ onMounted(() => {
   const dateFilterOption = CourseFilterHelper.getDateRangeForFilter(dateOption.value);
 
   const filter = new CourseFilterBuilder()
-      .withDateStart(dateFilterOption.dateStart)
-      .withDateEnd(dateFilterOption.dateEnd)
+      .withDateStart(dateFilterOption.dateStart!)
+      .withDateEnd(dateFilterOption.dateEnd!)
       .build()
 
   emit("filterInitialized", filter)

@@ -5,7 +5,8 @@ import DeviceRegistrationUserDeviceLoader from "./DeviceRegistrationUserDeviceLo
 import DeviceRegistrationLinkLoader from "./DeviceRegistrationLinkLoader.vue";
 
 const emit = defineEmits(["close"])
-const props = defineProps({
+
+defineProps({
   isVisible: Boolean,
   students: Array<CourseSessionAttendanceRecord>
 })
